@@ -40,10 +40,10 @@ This project demonstrates solving various partial differential equations using d
 ```
 ∂u/∂t + c ∂u/∂x = 0
 ```
-**Description**: Wave propagation with constant velocity. Both PIBLS and PIELM achieve excellent accuracy.
+**Description**: Wave propagation with constant velocity. Both our model and PIELM achieve excellent accuracy.
 
-**PIBLS Results (TC-01)**:
-![PIBLS TC-01 Results](BLS/BLS/linear_pde_solvers/TC-01_stdy_adv/pibls_tc1_results/PIBLS_tc1_results.png)
+**Our Model Results (TC-01)**:
+![Our Model TC-01 Results](BLS/BLS/linear_pde_solvers/TC-01_stdy_adv/pibls_tc1_results/PIBLS_tc1_results.png)
 
 **PIELM Results (TC-01)**:
 ![PIELM TC-01 Results](BLS/BLS/linear_pde_solvers/TC-01_stdy_adv/pielm_tc1_results/PIELM_tc1_results.png)
@@ -52,9 +52,9 @@ This project demonstrates solving various partial differential equations using d
 ```
 ∂u/∂t + c·∇u = 0
 ```
-**Description**: Two-dimensional wave propagation. PIBLS demonstrates robust performance in 2D domains.
+**Description**: Two-dimensional wave propagation. Our model demonstrates robust performance in 2D domains.
 
-![PIBLS 2D Solution and Error Heatmap](BLS/BLS/linear_pde_solvers/TC-04_stdy_adv/pibls_solution.png/PIBLS_2D_solution_and_error_heatmap.png)
+![Our Model 2D Solution and Error Heatmap](BLS/BLS/linear_pde_solvers/TC-04_stdy_adv/pibls_solution.png/PIBLS_2D_solution_and_error_heatmap.png)
 
 ### TC-08: Unsteady Advection (Variable Velocity)
 ```
@@ -62,7 +62,7 @@ This project demonstrates solving various partial differential equations using d
 ```
 **Description**: Time-dependent advection with variable velocity field. Shows excellent temporal evolution accuracy.
 
-![PIBLS Solution for Advection Equation](BLS/BLS/linear_pde_solvers/TC-08_unstdy_lin_adv_var/pibls_solution.png)
+![Our Model Solution for Advection Equation](BLS/BLS/linear_pde_solvers/TC-08_unstdy_lin_adv_var/pibls_solution.png)
 
 ### TC-09: Sharp Gradient Handling
 **Description**: Complex functions with discontinuities and high-frequency components. Demonstrates capability to handle challenging features.
