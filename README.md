@@ -34,65 +34,56 @@ This repository implements several PINN variants and their extensions:
 
 ## 📊 PDE Experiments
 
-This project solves various partial differential equations using different PINN architectures:
+This project demonstrates solving various partial differential equations using different PINN architectures. Below are key experimental results:
 
-### Advection Equation (Convection)
+### TC-01: Steady-State Advection Equation
 ```
 ∂u/∂t + c ∂u/∂x = 0
 ```
-**Description**: Describes wave propagation with constant velocity. Our architectures achieve near-perfect agreement with exact solutions.
+**Description**: Wave propagation with constant velocity. Both PIBLS and PIELM achieve excellent accuracy.
+
+**PIBLS Results (TC-01)**:
+![PIBLS TC-01 Results](BLS/BLS/linear_pde_solvers/TC-01_stdy_adv/pibls_tc1_results/PIBLS_tc1_results.png)
+
+**PIELM Results (TC-01)**:
+![PIELM TC-01 Results](BLS/BLS/linear_pde_solvers/TC-01_stdy_adv/pielm_tc1_results/PIELM_tc1_results.png)
+
+### TC-04: 2D Advection Equation
+```
+∂u/∂t + c·∇u = 0
+```
+**Description**: Two-dimensional wave propagation. PIBLS demonstrates robust performance in 2D domains.
+
+![PIBLS 2D Solution and Error Heatmap](BLS/BLS/linear_pde_solvers/TC-04_stdy_adv/pibls_solution.png/PIBLS_2D_solution_and_error_heatmap.png)
+
+### TC-08: Unsteady Advection (Variable Velocity)
+```
+∂u/∂t + c(x,t) ∂u/∂x = 0
+```
+**Description**: Time-dependent advection with variable velocity field. Shows excellent temporal evolution accuracy.
 
 ![PIBLS Solution for Advection Equation](BLS/BLS/linear_pde_solvers/TC-08_unstdy_lin_adv_var/pibls_solution.png)
 
-### Diffusion Equation (Heat Equation)
-```
-∂u/∂t = D ∇²u
-```
-**Description**: Models heat conduction and mass diffusion. PIELM demonstrates high accuracy with absolute error in the order of 10⁻⁵ to 10⁻⁷.
-
-![PIELM Solution for Diffusion Equation](BLS/BLS/linear_pde_solvers/TC-02_stdy_diff/pielm_tc2_results/PIELM_solution_and_error.png)
-
-### Advection-Diffusion Equation (Transport)
-```
-∂u/∂t + c ∂u/∂x = D ∂²u/∂x²
-```
-**Description**: Combines wave propagation and diffusion phenomena, commonly found in fluid dynamics and heat transfer.
-
-### Allen-Cahn Equation (Phase Field)
-```
-∂u/∂t = ε ∇²u + u - u³
-```
-**Description**: Phase field model for interface dynamics, used in materials science and fluid mechanics.
-
-### Navier-Stokes Equations (Fluid Dynamics)
-```
-∂u/∂t + u·∇u = -∇p + ν∇²u + f
-∇·u = 0
-```
-**Description**: Fundamental equations of fluid motion, describing conservation of momentum and mass.
-
-### Burgers Equation (Nonlinear Transport)
-```
-∂u/∂t + u ∂u/∂x = ν ∂²u/∂x²
-```
-**Description**: Simplified model of fluid dynamics with nonlinear convection and viscous diffusion.
-
-### KdV Equation (Soliton Dynamics)
-```
-∂u/∂t + u ∂u/∂x + ∂³u/∂x³ = 0
-```
-**Description**: Nonlinear wave equation exhibiting soliton solutions, important in plasma physics and water waves.
-
-### Sharp Gradient Handling (TC-09)
-**Description**: Complex functions with discontinuities and high-frequency components. Our methods demonstrate robust handling of challenging features.
+### TC-09: Sharp Gradient Handling
+**Description**: Complex functions with discontinuities and high-frequency components. Demonstrates capability to handle challenging features.
 
 ![PIELM Sharp Gradient Results](BLS/BLS/linear_pde_solvers/TC-09_sharp_gradient/pielm_tc09_results/PIELM_results.png)
 
+### Additional PDE Types Supported
+
+**Diffusion Equation**: `∂u/∂t = D ∇²u` - Heat conduction and mass diffusion  
+**Advection-Diffusion**: `∂u/∂t + c ∂u/∂x = D ∂²u/∂x²` - Combined transport phenomena  
+**Allen-Cahn Equation**: `∂u/∂t = ε ∇²u + u - u³` - Phase field dynamics  
+**Navier-Stokes**: `∂u/∂t + u·∇u = -∇p + ν∇²u + f` - Fluid dynamics  
+**Burgers Equation**: `∂u/∂t + u ∂u/∂x = ν ∂²u/∂x²` - Nonlinear transport  
+**KdV Equation**: `∂u/∂t + u ∂u/∂x + ∂³u/∂x³ = 0` - Soliton dynamics  
+
 ### Running Examples
 ```bash
-# Solve diffusion equation
-cd BLS/BLS/linear_pde_solvers/TC-02_stdy_diff
-python TC-02_stdy_diff.py
+# Solve steady-state advection (TC-01)
+cd BLS/BLS/linear_pde_solvers/TC-01_stdy_adv
+python TC-01_stdy_adv.py
+
 
 # Solve Allen-Cahn equation
 cd "Fuzzy Physics Informed Neural Network"
