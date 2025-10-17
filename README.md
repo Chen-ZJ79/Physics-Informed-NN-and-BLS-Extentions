@@ -5,7 +5,7 @@ This repository contains comprehensive implementations of Physics-Informed Neura
 ## 📋 Table of Contents
 
 - [Implementations & Experiments](#implementations--experiments)
-- [PDE Solutions & Visualizations](#pde-solutions--visualizations)
+- [PDE Experiments](#pde-experiments)
 - [Related Work](#related-work)
 - [Contributing](#contributing)
 - [License](#license)
@@ -65,6 +65,25 @@ This project demonstrates solving various partial differential equations using d
 **Description**: Complex functions with discontinuities and high-frequency components. Demonstrates capability to handle challenging features.
 
 ![PIELM Sharp Gradient Results](BLS/BLS/linear_pde_solvers/TC-09_sharp_gradient/pielm_tc09_results/PIELM_results.png)
+
+### Additional PDE Types Supported
+
+**Diffusion Equation**: `∂u/∂t = D ∇²u` - Heat conduction and mass diffusion  
+**Advection-Diffusion**: `∂u/∂t + c ∂u/∂x = D ∂²u/∂x²` - Combined transport phenomena  
+**Allen-Cahn Equation**: `∂u/∂t = ε ∇²u + u - u³` - Phase field dynamics  
+**Navier-Stokes**: `∂u/∂t + u·∇u = -∇p + ν∇²u + f` - Fluid dynamics  
+**Burgers Equation**: `∂u/∂t + u ∂u/∂x = ν ∂²u/∂x²` - Nonlinear transport  
+**KdV Equation**: `∂u/∂t + u ∂u/∂x + ∂³u/∂x³ = 0` - Soliton dynamics  
+
+### Running Examples
+```bash
+# Solve steady-state advection (TC-01)
+cd BLS/BLS/linear_pde_solvers/TC-01_stdy_adv
+python TC-01_stdy_adv.py
+
+# Solve Allen-Cahn equation
+cd "Fuzzy Physics Informed Neural Network"
+python Allen-Cahn_FPINNs_Forward.py
 ```
 
 **Note**: Solutions for nonlinear equations are currently under development and improvement.
@@ -158,4 +177,46 @@ All referenced papers are available in the [`papers/`](papers/) folder for easy 
 22. **[Revisiting PINNs](papers/Revisiting%20PINNs-Generative%20Adversarial.pdf)**  
     "Revisiting PINNs: Generative Adversarial Physics-informed Neural Networks"
 
+## 🤝 Contributing
 
+We welcome contributions to this project! Here are some ways you can help:
+
+### How to Contribute
+1. **Fork the repository** and create a feature branch
+2. **Add new PDE test cases** or improve existing implementations
+3. **Enhance visualization** capabilities or add new plotting functions
+4. **Improve documentation** or fix bugs
+5. **Submit a pull request** with a clear description of changes
+
+### Development Guidelines
+- Follow existing code style and naming conventions
+- Add appropriate tests for new functionality
+- Update documentation as needed
+- Ensure all tests pass before submitting
+
+### Areas for Contribution
+- **New PINN architectures**: Implement novel physics-informed learning approaches
+- **Additional PDE types**: Add support for more complex equations
+- **Performance optimization**: Improve training speed and accuracy
+- **Visualization tools**: Enhance plotting and analysis capabilities
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Original PINN Authors**: M. Raissi, P. Perdikaris, and G. E. Karniadakis for foundational work
+- **BLS Framework**: C. L. Philip Chen and colleagues for Broad Learning System development
+- **ELM Community**: G. B. Huang and researchers for Extreme Learning Machine contributions
+- **Fuzzy Logic Researchers**: For foundational work in fuzzy neural networks
+
+## 📞 Contact
+
+For questions, suggestions, or collaborations:
+- **GitHub Issues**: [Create an issue](https://github.com/Chen-ZJ79/Physics-Informed-NN-and-BLS-Extentions/issues)
+- **Email**: [your-email@domain.com]
+
+---
+
+**Note**: This repository is actively maintained. Star ⭐ the repository to stay updated with the latest developments!
