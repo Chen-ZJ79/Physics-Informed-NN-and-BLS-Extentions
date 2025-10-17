@@ -9,7 +9,7 @@ from mpl_toolkits.mplot3d import Axes3D
 #    Description of the Problem
 #---------------------------------------------
 #-------------------------------------------------------------------------------------------------------------------
-#  This code shows how to solve an unsteady linear advection equation with Spatially varying coefficient with PIELM and PIBLS
+#  This code shows how to solve an unsteady linear advection equation with Spatially varying coefficient with PIELM
 # --------------------------------------------------------------------------------------------------------------------%
 
 def generate_data(M_pde,M_ic,M_bc):
@@ -219,12 +219,7 @@ class PIELM:
         return (H @ self.output_weights).flatten()
 
 
-# =====================================================
-#                   PIBLS
-# =====================================================
-
-class PIBLS:
-    """物理信息宽度学习系统"""
+class model:
 
     def __init__(self, N1, N2, map_func='tanh', enhance_func='tanh'):
         self.N1 = int(N1)
@@ -391,36 +386,35 @@ def main():
     pielm_pred = pielm_model.predict(xx.ravel(), tt.ravel()).reshape(xx.shape)
     plot_results("PIELM", xx, tt, pielm_pred, exact_solution, "pielm_solution.png")
 
-    # ================ PIBLS  ================
     print("\n" + "=" * 40)
-    print("Training PIBLS Model")
+    print("Training Model")
     print("=" * 40)
 
-    pibls_model = PIBLS(N1=200, N2=100, map_func='tanh', enhance_func='sigmoid')
+    Our_model = model(N1=200, N2=100, map_func='tanh', enhance_func='sigmoid')
     start_time = time.time()
-    pibls_model.fit(pde_data, ic_data, bc_data)
-    pibls_time = time.time() - start_time
-    print(f"PIBLS Training time: {pibls_time:.2f} seconds")
+    Our_model.fit(pde_data, ic_data, bc_data)
+    Our_model_time = time.time() - start_time
+    print(f"Our_model Training time: {Our_model_time:.2f} seconds")
 
-    pibls_pred = pibls_model.predict(xx.ravel(), tt.ravel()).reshape(xx.shape)
-    plot_results("PIBLS", xx, tt, pibls_pred, exact_solution, "pibls_solution.png")
+    Our_model_pred = Our_model.predict(xx.ravel(), tt.ravel()).reshape(xx.shape)
+    plot_results("Our_model", xx, tt, Our_model_pred, exact_solution, "Our_model_solution.png")
 
     # ================ Results comparison ================
     print("\n" + "=" * 40)
     print("Performance Comparison")
     print("=" * 40)
     print(f"PIELM Training Time: {pielm_time:.4f} sec")
-    print(f"PIBLS Training Time: {pibls_time:.4f} sec")
+    print(f"Our_model Training Time: {Our_model_time:.4f} sec")
 
     exact_sol = exact_solution(xx, tt)
     pielm_error = np.linalg.norm(pielm_pred - exact_sol) / np.linalg.norm(exact_sol)
-    pibls_error = np.linalg.norm(pibls_pred - exact_sol) / np.linalg.norm(exact_sol)
+    Our_model_error = np.linalg.norm(Our_model_pred - exact_sol) / np.linalg.norm(exact_sol)
 
     print(f"\nPIELM Relative Error: {pielm_error:.4e}")
-    print(f"PIBLS Relative Error: {pibls_error:.4e}")
+    print(f"Our_model Relative Error: {Our_model_error:.4e}")
 
     # plt.figure(figsize=(10, 6))
-    # plt.bar(['PIELM', 'PIBLS'], [pielm_error, pibls_error], color=['blue', 'orange'])
+    # plt.bar(['PIELM', 'Our_model'], [pielm_error, Our_model_error], color=['blue', 'orange'])
     # plt.yscale('log')
     # plt.ylabel('Relative Error (log scale)')
     # plt.title('Model Performance Comparison')
@@ -429,7 +423,7 @@ def main():
     # plt.show()
     #
     # plt.figure(figsize=(10, 6))
-    # plt.bar(['PIELM', 'PIBLS'], [pielm_time, pibls_time], color=['green', 'red'])
+    # plt.bar(['PIELM', 'Our_model'], [pielm_time, Our_model_time], color=['green', 'red'])
     # plt.ylabel('Training Time (seconds)')
     # plt.title('Training Time Comparison')
     # plt.grid(axis='y', linestyle='--', alpha=0.7)

@@ -14,11 +14,10 @@ warnings.filterwarnings('ignore', category=RuntimeWarning)
 #    TC-09: 1D Composite Function with Discontinuities and Sharp Gradients
 # ---------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------
-#  This code uses PIELM and PIBLS to approximate a composite 1D function that contains
+#  This code uses PIELM to approximate a composite 1D function that contains
 #  both discontinuous functions and functions with sharp gradients
 # --------------------------------------------------------------------------------------------------------------------%
 
-# ====================== 复合函数定义 ======================
 def composite_function(x):
 
     # 方波 (-1 < x < -0.5)
@@ -218,11 +217,7 @@ class PIELM:
         return (H @ self.output_weights).flatten()
 
 
-# =====================================================
-#                   PIBLS
-# =====================================================
-
-class PIBLS:
+class Model:
 
     def __init__(self, N1, N2, map_func='tanh', enhance_func='sigmoid',
                  regularization=None, alpha=1e-6, use_sparse_init=True):
@@ -428,12 +423,11 @@ def main():
         "pielm_tc09_results"
     )
 
-    # ====== PIBLS ======
     print("\n" + "=" * 70)
-    print("Training PIBLS Model for Composite Function Approximation (TC-09)")
+    print("Training Model for Composite Function Approximation (TC-09)")
     print("=" * 70)
 
-    pibls_model = PIBLS(
+    Our_model = Model(
         N1=200,
         N2=300,
         map_func='tanh',
@@ -444,17 +438,17 @@ def main():
     )
 
     start_time = time.time()
-    pibls_model.fit(x_train, y_train)
-    pibls_time = time.time() - start_time
-    pibls_pred = pibls_model.predict(x_test)
-    print(f"PIBLS Training time: {pibls_time:.4f} seconds")
+    Our_model.fit(x_train, y_train)
+    Our_model_time = time.time() - start_time
+    Our_model_pred = Our_model.predict(x_test)
+    print(f"Our_model Training time: {Our_model_time:.4f} seconds")
 
-    pibls_mse, pibls_max_error = plot_results(
-        "PIBLS",
+    Our_model_mse, Our_model_max_error = plot_results(
+        "Our_model",
         x_train, y_train,
         x_test, y_test,
-        pibls_pred,
-        "pibls_tc09_results"
+        Our_model_pred,
+        "Our_model_tc09_results"
     )
 
     # # ====== 多项式回归 (基线) ======
@@ -504,7 +498,7 @@ def main():
     print(f"{'Model':<20} {'Training Time (s)':<20} {'MSE':<20} {'Max Error':<20}")
     print(f"{'-' * 70}")
     print(f"{'PIELM':<20} {pielm_time:<20.6f} {pielm_mse:<20.4e} {pielm_max_error:<20.4e}")
-    print(f"{'PIBLS':<20} {pibls_time:<20.6f} {pibls_mse:<20.4e} {pibls_max_error:<20.4e}")
+    print(f"{'Our_model':<20} {Our_model_time:<20.6f} {Our_model_mse:<20.4e} {Our_model_max_error:<20.4e}")
     # print(f"{'Polynomial':<20} {poly_time:<20.6f} {poly_mse:<20.4e} {poly_max_error:<20.4e}")
     # print(f"{'Fourier':<20} {fourier_time:<20.6f} {fourier_mse:<20.4e} {fourier_max_error:<20.4e}")
 
@@ -513,7 +507,7 @@ def main():
     plt.subplot(2, 1, 1)
     plt.plot(x_test, y_test, 'k-', linewidth=3, label='True Function')
     plt.plot(x_test, pielm_pred, 'b-', linewidth=1.5, alpha=0.8, label='PIELM')
-    plt.plot(x_test, pibls_pred, 'r-', linewidth=1.5, alpha=0.8, label='PIBLS')
+    plt.plot(x_test, Our_model_pred, 'r-', linewidth=1.5, alpha=0.8, label='Our_model')
     # plt.plot(x_test, poly_pred, 'g--', linewidth=1.2, alpha=0.7, label='Polynomial')
     # plt.plot(x_test, fourier_pred, 'm-.', linewidth=1.2, alpha=0.7, label='Fourier')
     plt.xlabel('x')
@@ -525,7 +519,7 @@ def main():
     # # 误差比较
     # plt.subplot(2, 1, 2)
     # plt.semilogy(x_test, np.abs(pielm_pred - y_test), 'b-', label='PIELM Error')
-    # plt.semilogy(x_test, np.abs(pibls_pred - y_test), 'r-', label='PIBLS Error')
+    # plt.semilogy(x_test, np.abs(Our_model_pred - y_test), 'r-', label='Our_model Error')
     # plt.semilogy(x_test, np.abs(poly_pred - y_test), 'g--', label='Polynomial Error')
     # plt.semilogy(x_test, np.abs(fourier_pred - y_test), 'm-.', label='Fourier Error')
     # plt.xlabel('x')
@@ -539,10 +533,10 @@ def main():
     # plt.show()
     #
     # # 模型指标对比
-    # models = ['PIELM', 'PIBLS', 'Polynomial', 'Fourier']
-    # mse_values = [pielm_mse, pibls_mse, poly_mse, fourier_mse]
-    # max_errors = [pielm_max_error, pibls_max_error, poly_max_error, fourier_max_error]
-    # times = [pielm_time, pibls_time, poly_time, fourier_time]
+    # models = ['PIELM', 'Our_model', 'Polynomial', 'Fourier']
+    # mse_values = [pielm_mse, Our_model_mse, poly_mse, fourier_mse]
+    # max_errors = [pielm_max_error, Our_model_max_error, poly_max_error, fourier_max_error]
+    # times = [pielm_time, Our_model_time, poly_time, fourier_time]
     #
     # fig, ax1 = plt.subplots(figsize=(12, 8))
 

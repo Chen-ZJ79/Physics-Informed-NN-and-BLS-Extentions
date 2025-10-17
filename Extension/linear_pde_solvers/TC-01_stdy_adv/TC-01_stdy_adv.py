@@ -9,7 +9,7 @@ import os
 #   1D Steady Advection Equation (TC-1)
 # ---------------------------------------------
 # -------------------------------------------------------------------------------------------------------------------
-#  This code solves the 1D steady advection equation with PIELM and PIBLS
+#  This code solves the 1D steady advection equation with PIELM 
 # --------------------------------------------------------------------------------------------------------------------%
 
 def generate_data_1d(N_f, N_b):
@@ -157,12 +157,7 @@ class PIELM:
         H = self.activation(X @ self.weights + self.bias)
         return (H @ self.output_weights).flatten()
 
-
-# =====================================================
-#                   PIBLS
-# =====================================================
-
-class PIBLS:
+class ...:
 
     def __init__(self, N1, N2, map_func='tanh', enhance_func='sigmoid'):
         self.N1 = int(N1)
@@ -188,96 +183,7 @@ class PIBLS:
             'linear': ('linear', lambda x: x)
         }
         return activations.get(activation.lower(), activations['tanh'])
-
-    def _get_derivative(self, activation):
-        derivatives = {
-            'tanh': lambda x: 1 - np.tanh(x) ** 2,
-            'relu': lambda x: np.where(x > 0, 1, 0),
-            'sigmoid': lambda x: (1 / (1 + np.exp(-x))) * (1 - 1 / (1 + np.exp(-x))),
-            'linear': lambda x: np.ones_like(x)
-        }
-        return derivatives.get(activation.lower(), derivatives['tanh'])
-
-    def _build_features(self, x):
-        X_bias = np.column_stack([x, np.ones_like(x)])
-        if not self.is_initialized:
-            self._initialize_weights(X_bias)
-
-        Z_map = X_bias @ self.W_map + self.B_map
-        H_map = self.map_activation(Z_map)
-        Z_enhance = H_map @ self.W_enhance + self.B_enhance
-        H_enhance = self.enhance_activation(Z_enhance)
-
-        return np.hstack([H_map, H_enhance]), (Z_map, Z_enhance)
-
-    def _initialize_weights(self, X_bias):
-        init_W = np.random.randn(2, self.N1)
-        self.W_map = self.sparse_bls(X_bias, X_bias @ init_W)
-        self.is_initialized = True
-
-    def shrinkage(self, a, b):
-        return np.sign(a) * np.maximum(np.abs(a) - b, 0)
-
-    def sparse_bls(self, A, b):
-        lam = 0.001
-        itrs = 50
-        AA = A.T.dot(A)
-        m = A.shape[1]
-        n = b.shape[1]
-        x1 = np.zeros([m, n])
-        wk = ok = uk = x1
-        L1 = np.linalg.inv(AA + np.eye(m))
-        L2 = L1.dot(A.T).dot(b)
-        for _ in range(itrs):
-            ck = L2 + L1.dot(ok - uk)
-            ok = self.shrinkage(ck + uk, lam)
-            uk += ck - ok
-            wk = ok
-        return wk
-
-    def _compute_derivatives(self, x, z_values):
-        Z_map, Z_enhance = z_values
-
-        dH_map = self.map_derivative(Z_map)
-        dH_dx_map = dH_map * self.W_map[0, :]
-        dH_enhance = self.enhance_derivative(Z_enhance)
-        dH_dx_enhance = dH_enhance * (dH_dx_map @ self.W_enhance)
-
-        dH_dx = np.hstack([dH_dx_map, dH_dx_enhance])
-
-        return dH_dx
-
-    def build_system(self, pde_data, bc_data):
-        x_pde = pde_data
-        x_bc = bc_data
-
-        # u_x = R
-        H_pde, z_pde = self._build_features(x_pde)
-        dH_dx = self._compute_derivatives(x_pde, z_pde)
-
-        A_pde = dH_dx
-        b_pde = source(x_pde)
-
-        # BC
-        H_bc, _ = self._build_features(x_bc)
-        b_bc = exact_solution(x_bc)
-
-        A_matrix = np.vstack([A_pde, H_bc])
-        b_vector = np.concatenate([b_pde, b_bc])
-
-        return A_matrix, b_vector
-
-    def fit(self, pde_data, bc_data):
-        A, b = self.build_system(pde_data, bc_data)
-        self.beta = pinv(A) @ b.reshape(-1, 1)
-        return self.beta
-
-    def predict(self, x):
-        if self.beta is None:
-            raise ValueError("Model not trained. Call fit() first.")
-        H, _ = self._build_features(x)
-        return (H @ self.beta).flatten()
-
+...
 
 # =====================================================
 #                       main
@@ -307,28 +213,9 @@ def main():
 
     pielm_error = plot_results_1d("PIELM", x_test, pielm_pred, exact_solution, "pielm_tc1_results")
 
-    # ====== PIBLS ======
-    print("\n" + "=" * 60)
-    print("Training PIBLS Model for 1D Advection Equation (TC-1)")
-    print("=" * 60)
 
-    pibls_model = PIBLS(N1=20, N2=20, map_func='tanh', enhance_func='sigmoid')
-    start_time = time.time()
-    pibls_model.fit(x_f, x_bc)
-    pibls_time = time.time() - start_time
-    print(f"PIBLS Training time: {pibls_time:.2f} seconds")
+...
 
-    pibls_pred = pibls_model.predict(x_test)
-    pibls_error = plot_results_1d("PIBLS", x_test, pibls_pred, exact_solution, "pibls_tc1_results")
-
-    # ====== Model Comparison ======
-    print("\n" + "=" * 60)
-    print("Performance Comparison for TC-1")
-    print("=" * 60)
-    print(f"PIELM Training Time: {pielm_time:.4f} sec")
-    print(f"PIBLS Training Time: {pibls_time:.4f} sec")
-    print(f"PIELM Relative Error: {pielm_error:.4e}")
-    print(f"PIBLS Relative Error: {pibls_error:.4e}")
 
     # Create comparison plot
     plt.figure(figsize=(12, 8))
@@ -337,7 +224,6 @@ def main():
     plt.subplot(2, 1, 1)
     plt.plot(x_test, exact_solution(x_test), 'k-', linewidth=3, label='Exact Solution')
     plt.plot(x_test, pielm_pred, 'b--', linewidth=2, label='PIELM Prediction')
-    plt.plot(x_test, pibls_pred, 'r-.', linewidth=2, label='PIBLS Prediction')
     plt.title('Solution Comparison for TC-1', fontsize=16)
     plt.xlabel('x', fontsize=12)
     plt.ylabel('u(x)', fontsize=12)
@@ -347,7 +233,6 @@ def main():
     # # Error comparison
     # plt.subplot(2, 1, 2)
     # plt.plot(x_test, np.abs(pielm_pred - exact_solution(x_test)), 'b-', linewidth=2, label='PIELM Error')
-    # plt.plot(x_test, np.abs(pibls_pred - exact_solution(x_test)), 'r-', linewidth=2, label='PIBLS Error')
     # plt.title('Error Comparison', fontsize=16)
     # plt.xlabel('x', fontsize=12)
     # plt.ylabel('Absolute Error', fontsize=12)

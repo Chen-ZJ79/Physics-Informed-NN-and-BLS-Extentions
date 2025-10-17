@@ -196,13 +196,8 @@ class PIELM:
         return (H @ self.output_weights).flatten()
 
 
-# =====================================================
-#                   PIBLS (1D扩散方程版本)
-# =====================================================
-
-class PIBLS:
-    """Physics-Informed Broad Learning System (1D diffusion equation version)"""
-
+class ...:
+  
     def __init__(self, N1, N2, map_func='tanh', enhance_func='sigmoid'):
         self.N1 = int(N1)
         self.N2 = int(N2)
@@ -217,138 +212,7 @@ class PIBLS:
         self.enhance_derivative = self._get_derivative(enhance_func)
         self.enhance_second_derivative = self._get_second_derivative(enhance_func)
 
-        self.W_map = None
-        self.B_map = np.random.randn(self.N1)
-        self.W_enhance = np.random.randn(self.N1, self.N2)
-        self.B_enhance = np.random.randn(self.N2)
-
-        self.beta = None
-        self.is_initialized = False
-
-    def _get_activation(self, activation):
-        """Get activation function"""
-        activations = {
-            'relu': ('relu', lambda x: np.maximum(0, x)),
-            'tanh': ('tanh', lambda x: np.tanh(x)),
-            'sigmoid': ('sigmoid', lambda x: 1 / (1 + np.exp(-x))),
-            'linear': ('linear', lambda x: x)
-        }
-        return activations.get(activation.lower(), activations['tanh'])
-
-    def _get_derivative(self, activation):
-        """Get first derivative function"""
-        derivatives = {
-            'tanh': lambda x: 1 - np.tanh(x) ** 2,
-            'relu': lambda x: np.where(x > 0, 1, 0),
-            'sigmoid': lambda x: (1 / (1 + np.exp(-x))) * (1 - 1 / (1 + np.exp(-x))),
-            'linear': lambda x: np.ones_like(x)
-        }
-        return derivatives.get(activation.lower(), derivatives['tanh'])
-
-    def _get_second_derivative(self, activation):
-        """Get second derivative function"""
-        second_derivatives = {
-            'tanh': lambda x: -2 * np.tanh(x) * (1 - np.tanh(x) ** 2),
-            'relu': lambda x: np.zeros_like(x),
-            'sigmoid': lambda x: (1 / (1 + np.exp(-x))) * (1 - 1 / (1 + np.exp(-x))) * (1 - 2 / (1 + np.exp(-x))),
-            'linear': lambda x: np.zeros_like(x)
-        }
-        return second_derivatives.get(activation.lower(), second_derivatives['tanh'])
-
-    def _build_features(self, x):
-        # Add bias term
-        X_bias = np.column_stack([x, np.ones_like(x)])
-        if not self.is_initialized:
-            self._initialize_weights(X_bias)
-
-        # 映射层
-        Z_map = X_bias @ self.W_map + self.B_map
-        H_map = self.map_activation(Z_map)
-
-        # 增强层
-        Z_enhance = H_map @ self.W_enhance + self.B_enhance
-        H_enhance = self.enhance_activation(Z_enhance)
-
-        return np.hstack([H_map, H_enhance]), (Z_map, Z_enhance)
-
-    def _initialize_weights(self, X_bias):
-        init_W = np.random.randn(2, self.N1)
-        self.W_map = self.sparse_bls(X_bias, X_bias @ init_W)
-        self.is_initialized = True
-
-    def shrinkage(self, a, b):
-        return np.sign(a) * np.maximum(np.abs(a) - b, 0)
-
-    def sparse_bls(self, A, b):
-        lam = 0.001
-        itrs = 50
-        AA = A.T.dot(A)
-        m = A.shape[1]
-        n = b.shape[1]
-        x1 = np.zeros([m, n])
-        wk = ok = uk = x1
-        L1 = np.linalg.inv(AA + np.eye(m))
-        L2 = L1.dot(A.T).dot(b)
-        for _ in range(itrs):
-            ck = L2 + L1.dot(ok - uk)
-            ok = self.shrinkage(ck + uk, lam)
-            uk += ck - ok
-            wk = ok
-        return wk
-
-    def _compute_derivatives(self, x, z_values):
-        Z_map, Z_enhance = z_values
-
-        # Mapping layer derivatives
-        dH_map = self.map_derivative(Z_map)
-        ddH_map = self.map_second_derivative(Z_map)
-
-        dH_dx_map = dH_map * self.W_map[0, :]
-        d2H_dx2_map = ddH_map * (self.W_map[0, :] ** 2)
-
-        # Enhancement layer derivatives
-        dH_enhance = self.enhance_derivative(Z_enhance)
-        ddH_enhance = self.enhance_second_derivative(Z_enhance)
-
-        # First derivative (chain rule)
-        dH_dx_enhance = dH_enhance * (dH_dx_map @ self.W_enhance)
-
-        # Second derivative (chain rule)
-        d2H_dx2_enhance = ddH_enhance * (dH_dx_map @ self.W_enhance) ** 2 + \
-                          dH_enhance * (d2H_dx2_map @ self.W_enhance)
-
-        # Combine features
-        d2H_dx2 = np.hstack([d2H_dx2_map, d2H_dx2_enhance])
-
-        return d2H_dx2
-
-    def build_system(self, x_f, x_bc):
-        # Diffusion equation: u_xx = R
-        H_pde, z_pde = self._build_features(x_f)
-        d2H_dx2 = self._compute_derivatives(x_f, z_pde)
-
-        A_pde = d2H_dx2
-        b_pde = source(x_f)
-
-        # Boundary conditions
-        H_bc, _ = self._build_features(x_bc)
-        b_bc = exact_solution(x_bc)
-
-        A_matrix = np.vstack([A_pde, H_bc])
-        b_vector = np.concatenate([b_pde, b_bc])
-
-        return A_matrix, b_vector
-
-    def fit(self, x_f, x_bc):
-        A, b = self.build_system(x_f, x_bc)
-        self.beta = pinv(A) @ b.reshape(-1, 1)
-        return self.beta
-
-    def predict(self, x):
-        if self.beta is None:
-            raise ValueError("Model not trained. Call fit() first.")
-        H, _ = self._build_features(x)
-        return (H @ self.beta).flatten()
+...
 
 
 # =====================================================
@@ -380,7 +244,7 @@ def main():
 
     pielm_error = plot_results("PIELM", x_test, pielm_pred, exact_solution, "pielm_tc2_results")
 
-    # ====== PIBLS ======
+
     print("\n" + "=" * 50)
     print("Training PIBLS Model for 1D Diffusion Equation (TC-2)")
     print("=" * 50)
@@ -389,73 +253,11 @@ def main():
     start_time = time.time()
     pibls_model.fit(x_f, x_bc)
     pibls_time = time.time() - start_time
-    print(f"PIBLS Training time: {pibls_time:.4f} seconds")
+    print(f"Training time: {pibls_time:.4f} seconds")
 
     pibls_pred = pibls_model.predict(x_test)
     pibls_error = plot_results("PIBLS", x_test, pibls_pred, exact_solution, "pibls_tc2_results")
 
-    # ====== Model Comparison ======
-    print("\n" + "=" * 50)
-    print("Performance Comparison for TC-2")
-    print("=" * 50)
-    print(f"PIELM Training Time: {pielm_time:.6f} sec")
-    print(f"PIBLS Training Time: {pibls_time:.6f} sec")
-    print(f"PIELM Relative Error: {pielm_error:.6e}")
-    print(f"PIBLS Relative Error: {pibls_error:.6e}")
-
-    # # Create comparison plot
-    # plt.figure(figsize=(12, 8))
-    #
-    # # Solution comparison
-    # plt.subplot(2, 1, 1)
-    # plt.plot(x_test, pielm_pred, 'b-', linewidth=2, label='PIELM Prediction')
-    # plt.plot(x_test, pibls_pred, 'g-', linewidth=2, label='PIBLS Prediction')
-    # plt.plot(x_test, exact_solution(x_test), 'r--', linewidth=2, label='Exact Solution')
-    # plt.title('Model Comparison for TC-2', fontsize=16)
-    # plt.xlabel('x', fontsize=12)
-    # plt.ylabel('u(x)', fontsize=12)
-    # plt.legend(fontsize=12)
-    # plt.grid(True, alpha=0.3)
-
-    # # 误差对比
-    # plt.subplot(2, 1, 2)
-    # plt.plot(x_test, np.abs(pielm_pred - exact_solution(x_test)), 'b-', linewidth=2, label='PIELM Error')
-    # plt.plot(x_test, np.abs(pibls_pred - exact_solution(x_test)), 'g-', linewidth=2, label='PIBLS Error')
-    # plt.title('Error Comparison', fontsize=16)
-    # plt.xlabel('x', fontsize=12)
-    # plt.ylabel('Absolute Error', fontsize=12)
-    # plt.yscale('log')
-    # plt.legend(fontsize=12)
-    # plt.grid(True, alpha=0.3)
-    #
-    # plt.tight_layout()
-    # plt.savefig('tc2_comparison.png', dpi=300, bbox_inches='tight')
-    # plt.show()
-
-    # # Error statistics comparison
-    # plt.figure(figsize=(10, 6))
-    # models = ['PIELM', 'PIBLS']
-    # errors = [pielm_error, pibls_error]
-    # times = [pielm_time, pibls_time]
-    #
-    # # 误差对比
-    # plt.subplot(1, 2, 1)
-    # plt.bar(models, errors, color=['blue', 'green'])
-    # plt.yscale('log')
-    # plt.ylabel('Relative Error (log scale)')
-    # plt.title('Error Comparison')
-    # plt.grid(axis='y', alpha=0.3)
-    #
-    # # 时间对比
-    # plt.subplot(1, 2, 2)
-    # plt.bar(models, times, color=['orange', 'red'])
-    # plt.ylabel('Training Time (seconds)')
-    # plt.title('Training Time Comparison')
-    # plt.grid(axis='y', alpha=0.3)
-    #
-    # plt.tight_layout()
-    # plt.savefig('tc2_error_time_comparison.png', dpi=300, bbox_inches='tight')
-    # plt.show()
 
 
 if __name__ == "__main__":
