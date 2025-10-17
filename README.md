@@ -42,9 +42,6 @@ This project demonstrates solving various partial differential equations using d
 ```
 **Description**: Wave propagation with constant velocity. Both our model and PIELM achieve excellent accuracy.
 
-**Our Model Results (TC-01)**:
-![Our Model TC-01 Results](BLS/BLS/linear_pde_solvers/TC-01_stdy_adv/pibls_tc1_results/PIBLS_tc1_results.png)
-
 **PIELM Results (TC-01)**:
 ![PIELM TC-01 Results](BLS/BLS/linear_pde_solvers/TC-01_stdy_adv/pielm_tc1_results/PIELM_tc1_results.png)
 
