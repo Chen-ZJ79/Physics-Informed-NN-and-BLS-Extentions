@@ -65,26 +65,6 @@ This project demonstrates solving various partial differential equations using d
 **Description**: Complex functions with discontinuities and high-frequency components. Demonstrates capability to handle challenging features.
 
 ![PIELM Sharp Gradient Results](BLS/BLS/linear_pde_solvers/TC-09_sharp_gradient/pielm_tc09_results/PIELM_results.png)
-
-### Additional PDE Types Supported
-
-**Diffusion Equation**: `∂u/∂t = D ∇²u` - Heat conduction and mass diffusion  
-**Advection-Diffusion**: `∂u/∂t + c ∂u/∂x = D ∂²u/∂x²` - Combined transport phenomena  
-**Allen-Cahn Equation**: `∂u/∂t = ε ∇²u + u - u³` - Phase field dynamics  
-**Navier-Stokes**: `∂u/∂t + u·∇u = -∇p + ν∇²u + f` - Fluid dynamics  
-**Burgers Equation**: `∂u/∂t + u ∂u/∂x = ν ∂²u/∂x²` - Nonlinear transport  
-**KdV Equation**: `∂u/∂t + u ∂u/∂x + ∂³u/∂x³ = 0` - Soliton dynamics  
-
-### Running Examples
-```bash
-# Solve steady-state advection (TC-01)
-cd BLS/BLS/linear_pde_solvers/TC-01_stdy_adv
-python TC-01_stdy_adv.py
-
-
-# Solve Allen-Cahn equation
-cd "Fuzzy Physics Informed Neural Network"
-python Allen-Cahn_FPINNs_Forward.py
 ```
 
 **Note**: Solutions for nonlinear equations are currently under development and improvement.
